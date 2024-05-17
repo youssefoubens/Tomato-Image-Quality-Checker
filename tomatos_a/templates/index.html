@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABDELAZIZ_OUHTIT</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .background-image {
+            background-image: url('https://source.unsplash.com/featured/?tomatoes');
+            background-size: cover;
+            background-position: center;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="background-image h-screen flex items-start">
+        <div class="container mx-auto px-4 py-8 flex flex-col items-center bg-white bg-opacity-75 rounded-lg shadow-lg">
+            <h1 class="text-3xl font-bold text-gray-800 mb-4">Welcome Mr. ABDELAZIZ_OUHTIT to the Tomato Image Quality Checker</h1>
+            <p class="text-gray-700 mb-4">Upload your tomato images to assess their quality!</p>
+            <form action="#" method="POST" enctype="multipart/form-data" name="imageUploadForm">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label for="image" class="block text-gray-700 font-bold mb-2">Upload Image:</label>
+                    <input type="file" id="image" name="image" class="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm" onchange="loadFile(event)">
+                </div>
+                <button type="submit" class="bg-indigo-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">Check Quality</button>
+            </form>
+            {% if prediction %}
+            <div class="mt-8 p-4 bg-green-100 border border-green-400 text-green-700 rounded-md">
+                <h2 class="text-2xl font-bold mb-2">Prediction Result</h2>
+                <p class="text-xl">{{ prediction }}</p>
+                <div class="details mt-2">
+                    {% if prediction == "Fresh" %}
+                    <p>La tomate est fraîche et convient à la consommation ou à la vente.</p>
+                {% elif prediction == "Defect" %}
+                    <p>La tomate a des défauts. Elle pourrait être endommagée ou de qualité inférieure.</p>
+                {% elif prediction == "Mature" %}
+                    <p>La tomate est mûre et prête à être utilisée immédiatement.</p>
+                {% elif prediction == "Immature" %}
+                    <p>La tomate est immature et pourrait avoir besoin de plus de temps pour mûrir.</p>
+                {% else %}
+                    <p>Impossible de déterminer la qualité de la tomate. Veuillez essayer de télécharger une autre image.</p>
+                {% endif %}
+                
+                </div>
+            </div>
+            {% endif %}
+            <div id="preview-container" class="mt-8 p-4 bg-blue-100 border border-blue-400 text-blue-700 rounded-md hidden">
+                <h2 class="text-2xl font-bold mb-2">Uploaded Image Preview</h2>
+                <img id="output" alt="Uploaded Tomato Image" class="rounded-md shadow-md w-20 h-20">
+            </div>
+        </div>
+    </div>
+    <script>
+        function loadFile(event) {
+            const output = document.getElementById('output');
+            const previewContainer = document.getElementById('preview-container');
+            output.src = URL.createObjectURL(event.target.files[0]);
+            previewContainer.classList.remove('hidden');
+            output.onload = function() {
+                URL.revokeObjectURL(output.src) // Free memory
+            }
+        }
+    </script>
+</body>
+</html>
